@@ -9,13 +9,25 @@ const mongoose = require('mongoose');
 const auth = require('./routes/auth');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-
+const cors = require('cors');
 const app = express();
 
 mongoose.connect(process.env.DBURL).then(() =>{
   console.log(`Connected to DB: ${process.env.DBURL}`);
 });
 
+
+var whitelist = [
+    'http://localhost:4200',
+];
+var corsOptions = {
+    origin: function(origin, callback){
+        var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+        callback(null, originIsWhitelisted);
+    },
+    credentials: true
+};
+app.use(cors(corsOptions));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
